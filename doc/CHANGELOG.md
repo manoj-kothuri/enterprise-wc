@@ -17,6 +17,7 @@
 - `[Icons]` All icons have padding on top and bottom effectively making them 4px smaller by design. This change may require some UI corrections to css. ([#6868](https://github.com/infor-design/enterprise/issues/6868))
 - `[Icons]` Over 60 new icons and 126 new industry focused icons. ([#6868](https://github.com/infor-design/enterprise/issues/6868))
 - `[Icons]` Added new empty state icons. ([#6934](https://github.com/infor-design/enterprise/issues/6934))
+- `[Calendar]` Added extensibility feature for IDS calendar event. ([#911](https://github.com/infor-design/enterprise-wc/issues/911))
 
 ## 1.0.0-beta.2
 
