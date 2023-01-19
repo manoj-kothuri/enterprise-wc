@@ -27,9 +27,13 @@ export type CalendarEventTypeData = {
   disabled?: boolean
 };
 
+interface EventCountStrategy {
+  eventCount(val?: number): number;
+}
+
 @customElement('ids-calendar-event')
 @scss(styles)
-export default class IdsCalendarEvent extends Base {
+export default class IdsCalendarEvent extends Base implements EventCountStrategy {
   // Property used to position overlapping events in month view
   #order = 0;
 
@@ -41,8 +45,18 @@ export default class IdsCalendarEvent extends Base {
 
   cachedEventType: CalendarEventTypeData | null = null;
 
+  MAX_EVENT_COUNT = 3;
+
   constructor() {
     super();
+  }
+
+  /**
+   * Returns MAX_EVENT_COUNT default value
+   * @returns {number} MAX_EVENT_COUNT
+   */
+  eventCount(): number {
+    return this.MAX_EVENT_COUNT;
   }
 
   /**

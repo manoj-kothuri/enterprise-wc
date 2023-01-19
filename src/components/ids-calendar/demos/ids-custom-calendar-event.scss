@@ -222,17 +222,17 @@
   }
 
   // Feature Request 911
-  .custom-calendar-event {
-    margin-left: 15px;
-  }
-
   .custom-calendar-event-title {
     font-size: 12px;
+    line-height: 12px;
+    width: 100%;
   }
 
   .custom-calendar-event-details {
     font-size: 10px;
     float: left;
+    line-height: 10px;
+    width: 100%;
   }
 
   .custom-calendar-event-icon {

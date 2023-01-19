@@ -895,11 +895,19 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
       const colorAttr: string = legend ? `data-color="${legend.color}"` : '';
       const dateKey = this.generateDateKey(new Date(year, month, day));
 
+      // check for custom calendar
+      const activeDay = this.getSelectedDay();
+      let isCustomCalendar = false;
+      if (activeDay) {
+        const customCalendarEvents: any = activeDay.querySelectorAll('.events-container > [slot]');
+        isCustomCalendar = !!customCalendarEvents;
+      }
+
       return `<td aria-label="${ariaLabel}" ${dataAttr} ${classAttr} ${selectedAttr} ${colorAttr}>
         <span class="day-container">
           <ids-text
             aria-hidden="true"
-            class="day-text"
+            ${isCustomCalendar ? `class="custom-calendar-day-text"` : `class="day-text"`}
             font-size="14"
           >${dayText}</ids-text>
         </span>
@@ -1492,7 +1500,7 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
       const days = this.#countDays(start, end) || 1;
 
       for (let i = 0; i < days; i++) {
-        const { calendarEvent, isCustom } = this.#newCalendarEvent(customCalendarEvent);
+        const { calendarEvent } = this.#newCalendarEvent(customCalendarEvent);
         const eventType = this.eventTypesData?.find((et: CalendarEventTypeData) => et.id === event.type) ?? null;
         const eventOrder = baseOrder + index;
         calendarEvent.eventTypeData = eventType;
@@ -1527,13 +1535,8 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
 
           calendarEvent.setAttribute(attributes.Y_OFFSET, `${(calendarEvent.order * 16) + BASE_Y_OFFSET}px`);
           // hide overflowing event elements
-          isOverflowing = isCustom ? (calendarEvent.order > 0) : (calendarEvent.order > MAX_EVENT_COUNT - 1);
+          isOverflowing = calendarEvent.order > calendarEvent.eventCount() - 1;
           calendarEvent.hidden = isOverflowing;
-          if (isCustom) {
-            // setting dateKey value for custom calendar event
-            const customEventDateKey = `${year}${month}${day}`;
-            calendarEvent.dateKey = customEventDateKey;
-          }
           dateCell.querySelector('.events-container')?.appendChild(calendarEvent as any);
         }
       }
@@ -1560,7 +1563,7 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
     const day = dateKey.substring(6);
     const date = `${month}/${day}/${year}`;
     const tmpl = `
-      <ids-text data-date="${date}" class="events-overflow" font-size="12">
+      <ids-text data-date="${date}" class="events-overflow" ${this.#isCustom ? `font-size="10"` : `font-size="12"`}>
         ${hiddenEvents.length}+ ${this.locale.translate('More')}
       </ids-text>
     `;
@@ -1573,15 +1576,15 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
    * @param {IdsCalendarEvent} customCalendarEvent optional custom event to use instead of default
    * @returns {IdsCalendarEvent} calendar event
    */
-  #newCalendarEvent(customCalendarEvent?: any): { isCustom: boolean, calendarEvent: any } {
+  #newCalendarEvent(customCalendarEvent?: any): { calendarEvent: any } {
     if (customCalendarEvent?.name === 'MonthViewCalendarEventTemplate') {
       const eventTemplate = customCalendarEvent.assignedNodes()[0];
       if (eventTemplate) {
         this.#isCustom = true;
-        return { isCustom: true, calendarEvent: eventTemplate.cloneNode(true) };
+        return { calendarEvent: eventTemplate.cloneNode(true) };
       }
     }
-    return { isCustom: false, calendarEvent: new IdsCalendarEvent() };
+    return { calendarEvent: new IdsCalendarEvent() };
   }
 
   /**
