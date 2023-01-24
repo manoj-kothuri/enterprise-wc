@@ -46,7 +46,6 @@ import {
   BASE_Y_OFFSET,
   MIN_MONTH,
   MAX_MONTH,
-  MAX_EVENT_COUNT,
   WEEK_LENGTH,
   IdsRangeSettingsInterface
 } from './ids-month-view-common';
@@ -88,6 +87,7 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
     this.#attachEventHandlers();
     this.#attachKeyboardListeners();
     this.#renderMonth();
+    document.documentElement.style.setProperty('--ids-calendar-day-text', '13px');
   }
 
   // Flag value for custom calendar event
@@ -895,19 +895,11 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
       const colorAttr: string = legend ? `data-color="${legend.color}"` : '';
       const dateKey = this.generateDateKey(new Date(year, month, day));
 
-      // check for custom calendar
-      const activeDay = this.getSelectedDay();
-      let isCustomCalendar = false;
-      if (activeDay) {
-        const customCalendarEvents: any = activeDay.querySelectorAll('.events-container > [slot]');
-        isCustomCalendar = !!customCalendarEvents;
-      }
-
       return `<td aria-label="${ariaLabel}" ${dataAttr} ${classAttr} ${selectedAttr} ${colorAttr}>
         <span class="day-container">
           <ids-text
             aria-hidden="true"
-            ${isCustomCalendar ? `class="custom-calendar-day-text"` : `class="day-text"`}
+            class="day-text"
             font-size="14"
           >${dayText}</ids-text>
         </span>
@@ -1563,7 +1555,7 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
     const day = dateKey.substring(6);
     const date = `${month}/${day}/${year}`;
     const tmpl = `
-      <ids-text data-date="${date}" class="events-overflow" ${this.#isCustom ? `font-size="10"` : `font-size="12"`}>
+      <ids-text data-date="${date}" class="events-overflow" font-size="12">
         ${hiddenEvents.length}+ ${this.locale.translate('More')}
       </ids-text>
     `;

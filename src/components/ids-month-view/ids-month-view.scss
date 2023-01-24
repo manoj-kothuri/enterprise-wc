@@ -459,19 +459,7 @@
       @include z-1();
 
       left: calc(100% - 25px);
-      top: 13px;
-      width: 10px;
-      text-align: center;
-    }
-
-    // Feature Request 911
-    .custom-calendar-day-text {
-      @include absolute();
-      @include cursor-pointer();
-      @include z-1();
-
-      left: calc(100% - 25px);
-      top: 2px;
+      top: var(--ids-calendar-day-text);
       width: 10px;
       text-align: center;
     }

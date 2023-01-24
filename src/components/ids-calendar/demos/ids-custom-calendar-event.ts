@@ -1,14 +1,11 @@
 import IdsCalendarEvent, { CalendarEventTypeData } from '../ids-calendar-event';
 import styles from './ids-custom-calendar-event.scss';
 import { customElement, scss } from '../../../core/ids-decorators';
+import { EventCountStrategy } from '../ids-calendar-interface';
 
 interface CustomCalendarEventTypeData extends CalendarEventTypeData {
   noOfAttributes?: number;
   attrs?: [];
-}
-
-interface EventCountStrategy {
-  eventCount(val?: number): number;
 }
 
 const eventPositionMap = new Map();
@@ -58,6 +55,24 @@ export default class IdsCustomCalendarEvent extends IdsCalendarEvent implements 
           this.container.style.top = `${(order * 18) + 25}px`;
         }
         this.container.style.height = this.eventPillHeight;
+      }
+    }
+
+    // overrides the day cell date text position
+    document.documentElement.style.setProperty('--ids-calendar-day-text', '2px');
+
+    // overrides the font-size of "More" text for events overflow inside the day cell
+    const calendar: any = document.querySelector('ids-calendar');
+    const view = calendar.getView();
+    const eventRows = view.container.children[0].children[0].rows;
+    for (let i = 0; i < eventRows.length; i++) {
+      for (let j = 0; j < eventRows[i].cells.length; j++) {
+        const childrenCount = eventRows[i].cells[j].children[1]?.children.length;
+        if (childrenCount > 0) {
+          if (eventRows[i].cells[j].children[1].children[childrenCount - 1].tagName === 'IDS-TEXT') {
+            eventRows[i].cells[j].children[1].children[childrenCount - 1].setAttribute('font-size', '10');
+          }
+        }
       }
     }
   }
