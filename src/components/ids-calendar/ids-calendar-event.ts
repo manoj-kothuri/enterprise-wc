@@ -3,7 +3,6 @@ import styles from './ids-calendar-event.scss';
 import { customElement, scss } from '../../core/ids-decorators';
 import { stringToBool } from '../../utils/ids-string-utils/ids-string-utils';
 import { attributes } from '../../core/ids-attributes';
-import { EventCountStrategy } from './ids-calendar-interface';
 
 export type CalendarEventData = {
   id: string;
@@ -30,7 +29,7 @@ export type CalendarEventTypeData = {
 
 @customElement('ids-calendar-event')
 @scss(styles)
-export default class IdsCalendarEvent extends Base implements EventCountStrategy {
+export default class IdsCalendarEvent extends Base {
   // Property used to position overlapping events in month view
   #order = 0;
 
@@ -42,18 +41,8 @@ export default class IdsCalendarEvent extends Base implements EventCountStrategy
 
   cachedEventType: CalendarEventTypeData | null = null;
 
-  MAX_EVENT_COUNT = 3;
-
   constructor() {
     super();
-  }
-
-  /**
-   * Returns MAX_EVENT_COUNT default value
-   * @returns {number} MAX_EVENT_COUNT
-   */
-  eventCount(): number {
-    return this.MAX_EVENT_COUNT;
   }
 
   /**

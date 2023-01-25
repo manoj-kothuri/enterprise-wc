@@ -47,6 +47,7 @@ import {
   MIN_MONTH,
   MAX_MONTH,
   WEEK_LENGTH,
+  MAX_EVENT_COUNT,
   IdsRangeSettingsInterface
 } from './ids-month-view-common';
 
@@ -87,7 +88,6 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
     this.#attachEventHandlers();
     this.#attachKeyboardListeners();
     this.#renderMonth();
-    document.documentElement.style.setProperty('--ids-calendar-day-text', '13px');
   }
 
   // Flag value for custom calendar event
@@ -1526,8 +1526,14 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
           }
 
           calendarEvent.setAttribute(attributes.Y_OFFSET, `${(calendarEvent.order * 16) + BASE_Y_OFFSET}px`);
-          // hide overflowing event elements
-          isOverflowing = calendarEvent.order > calendarEvent.eventCount() - 1;
+          // hide overflowing event
+          let maxEventCount = MAX_EVENT_COUNT;
+          try {
+            maxEventCount = calendarEvent.eventCount();
+          } catch (error) {
+            // catch error
+          }
+          isOverflowing = calendarEvent.order > maxEventCount - 1;
           calendarEvent.hidden = isOverflowing;
           dateCell.querySelector('.events-container')?.appendChild(calendarEvent as any);
         }

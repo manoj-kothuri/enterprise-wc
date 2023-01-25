@@ -1,11 +1,14 @@
 import IdsCalendarEvent, { CalendarEventTypeData } from '../ids-calendar-event';
 import styles from './ids-custom-calendar-event.scss';
 import { customElement, scss } from '../../../core/ids-decorators';
-import { EventCountStrategy } from '../ids-calendar-interface';
 
 interface CustomCalendarEventTypeData extends CalendarEventTypeData {
   noOfAttributes?: number;
   attrs?: [];
+}
+
+interface EventCountStrategy {
+  eventCount(val?: number): number;
 }
 
 const eventPositionMap = new Map();
@@ -59,7 +62,7 @@ export default class IdsCustomCalendarEvent extends IdsCalendarEvent implements 
     }
 
     // overrides the day cell date text position
-    document.documentElement.style.setProperty('--ids-calendar-day-text', '2px');
+    document.documentElement.style.setProperty('--ids-month-view-day-text-top', '2px');
 
     // overrides the font-size of "More" text for events overflow inside the day cell
     const calendar: any = document.querySelector('ids-calendar');
