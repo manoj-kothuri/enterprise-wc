@@ -44,40 +44,40 @@ export default class IdsCustomCalendarEvent extends IdsCalendarEvent implements 
     super.connectedCallback();
 
     if (this.container) {
-      const order = this.order;
-      if (this.eventData && order <= 3) {
-        // space between event pills
-        this.manageEventPillsPosition(this.dateKey, order, this.eventTypeData);
-        // position event element vertically
-        if (order === 0) {
-          this.container.style.top = '20px';
-        } else if (eventPositionMap.get(`${this.dateKey}_${order}`)) {
-          this.container.style.top = `${eventPositionMap.get(`${this.dateKey}_${order}`)}px`;
-        } else {
-          // if event-types data doesn't contain noOfAttributes and attr values
-          this.container.style.top = `${(order * 18) + 25}px`;
-        }
-        this.container.style.height = this.eventPillHeight;
-      }
+      // const order = this.order;
+      // if (this.eventData && order <= 3) {
+      //   // space between event pills
+      //   this.manageEventPillsPosition(this.dateKey, order, this.eventTypeData);
+      //   // position event element vertically
+      //   if (order === 0) {
+      //     this.container.style.top = '20px';
+      //   } else if (eventPositionMap.get(`${this.dateKey}_${order}`)) {
+      //     this.container.style.top = `${eventPositionMap.get(`${this.dateKey}_${order}`)}px`;
+      //   } else {
+      //     // if event-types data doesn't contain noOfAttributes and attr values
+      //     this.container.style.top = `${(order * 18) + 25}px`;
+      //   }
+      this.container.style.height = this.eventPillHeight;
+      // }
     }
 
     // overrides the day cell date text position
     document.documentElement.style.setProperty('--ids-month-view-day-text-top', '2px');
 
     // overrides the font-size of "More" text for events overflow inside the day cell
-    const calendar: any = document.querySelector('ids-calendar');
-    const view = calendar.getView();
-    const eventRows = view.container.children[0].children[0].rows;
-    for (let i = 0; i < eventRows.length; i++) {
-      for (let j = 0; j < eventRows[i].cells.length; j++) {
-        const childrenCount = eventRows[i].cells[j].children[1]?.children.length;
-        if (childrenCount > 0) {
-          if (eventRows[i].cells[j].children[1].children[childrenCount - 1].tagName === 'IDS-TEXT') {
-            eventRows[i].cells[j].children[1].children[childrenCount - 1].setAttribute('font-size', '10');
-          }
-        }
-      }
-    }
+    // const calendar: any = document.querySelector('ids-calendar');
+    // const view = calendar?.getView();
+    // const eventRows = view.container.children[0].children[0].rows;
+    // for (let i = 0; i < eventRows.length; i++) {
+    //   for (let j = 0; j < eventRows[i].cells.length; j++) {
+    //     const childrenCount = eventRows[i].cells[j].children[1]?.children.length;
+    //     if (childrenCount > 0) {
+    //       if (eventRows[i].cells[j].children[1].children[childrenCount - 1].tagName === 'IDS-TEXT') {
+    //         eventRows[i].cells[j].children[1].children[childrenCount - 1].setAttribute('font-size', '10');
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   template(): string {

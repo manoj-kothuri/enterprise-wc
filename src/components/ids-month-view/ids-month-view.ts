@@ -93,6 +93,8 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
   // Flag value for custom calendar event
   #isCustom = false;
 
+  #eventYOffset: number | any;
+
   /**
    * Return the attributes we handle as getters/setters
    * @returns {Array} The attributes in an array
@@ -1499,6 +1501,7 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
         calendarEvent.eventData = event;
         calendarEvent.cssClass = ['is-month-view'];
         calendarEvent.order = eventOrder;
+        this.yOffset = calendarEvent.order;
 
         if (i > 0) {
           start.setDate(start.getDate() + 1);
@@ -1525,15 +1528,17 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
             calendarEvent.cssClass = extraCss;
           }
 
-          calendarEvent.setAttribute(attributes.Y_OFFSET, `${(calendarEvent.order * 16) + BASE_Y_OFFSET}px`);
+          // const eventYOffset = this.yOffset;
+          calendarEvent.setAttribute(attributes.Y_OFFSET, `${this.yOffset}px`);
           // hide overflowing event
-          let maxEventCount = MAX_EVENT_COUNT;
-          try {
-            maxEventCount = calendarEvent.eventCount();
-          } catch (error) {
-            // catch error
-          }
-          isOverflowing = calendarEvent.order > maxEventCount - 1;
+          // let maxEventCount = MAX_EVENT_COUNT;
+          // try {
+          //   maxEventCount = calendarEvent.eventCount();
+          // } catch (error) {
+          //   // catch error
+          // }
+          // isOverflowing = calendarEvent.order > maxEventCount - 1;
+          isOverflowing = this.isEventOverflowing(calendarEvent);
           calendarEvent.hidden = isOverflowing;
           dateCell.querySelector('.events-container')?.appendChild(calendarEvent as any);
         }
@@ -1607,6 +1612,22 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
       this.#clearRangeClasses();
       this.selectDay(year, month, day);
     }
+  }
+
+  get yOffset(): number {
+    return this.#eventYOffset;
+  }
+
+  set yOffset(order: number | any) {
+    this.#eventYOffset = (order * 16) + BASE_Y_OFFSET;
+  }
+
+  // generateYOffset(calendarEvent: IdsCalendarEvent): number {
+  //   return (calendarEvent.order * 16) + BASE_Y_OFFSET;
+  // }
+
+  isEventOverflowing(calendarEvent: IdsCalendarEvent): boolean {
+    return calendarEvent.order > MAX_EVENT_COUNT - 1;
   }
 }
 
