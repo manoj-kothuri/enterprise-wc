@@ -1501,7 +1501,6 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
         calendarEvent.eventData = event;
         calendarEvent.cssClass = ['is-month-view'];
         calendarEvent.order = eventOrder;
-        this.yOffset = calendarEvent.order;
 
         if (i > 0) {
           start.setDate(start.getDate() + 1);
@@ -1528,16 +1527,9 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
             calendarEvent.cssClass = extraCss;
           }
 
-          // const eventYOffset = this.yOffset;
-          calendarEvent.setAttribute(attributes.Y_OFFSET, `${this.yOffset}px`);
+          const eventYOffset = this.generateYOffset(calendarEvent);
+          calendarEvent.setAttribute(attributes.Y_OFFSET, `${eventYOffset}px`);
           // hide overflowing event
-          // let maxEventCount = MAX_EVENT_COUNT;
-          // try {
-          //   maxEventCount = calendarEvent.eventCount();
-          // } catch (error) {
-          //   // catch error
-          // }
-          // isOverflowing = calendarEvent.order > maxEventCount - 1;
           isOverflowing = this.isEventOverflowing(calendarEvent);
           calendarEvent.hidden = isOverflowing;
           dateCell.querySelector('.events-container')?.appendChild(calendarEvent as any);
@@ -1614,20 +1606,12 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
     }
   }
 
-  get yOffset(): number {
-    return this.#eventYOffset;
+  generateYOffset(event: IdsCalendarEvent): number {
+    return (event.order * 16) + BASE_Y_OFFSET;
   }
 
-  set yOffset(order: number | any) {
-    this.#eventYOffset = (order * 16) + BASE_Y_OFFSET;
-  }
-
-  // generateYOffset(calendarEvent: IdsCalendarEvent): number {
-  //   return (calendarEvent.order * 16) + BASE_Y_OFFSET;
-  // }
-
-  isEventOverflowing(calendarEvent: IdsCalendarEvent): boolean {
-    return calendarEvent.order > MAX_EVENT_COUNT - 1;
+  isEventOverflowing(event: IdsCalendarEvent): boolean {
+    return event.order > MAX_EVENT_COUNT - 1;
   }
 }
 

@@ -1,61 +1,36 @@
-import { CalendarEventData, CalendarEventTypeData } from '../ids-calendar-event';
+import { CalendarEventTypeData } from '../ids-calendar-event';
 import IdsCustomCalendarEvent from './ids-custom-calendar-event';
 
-interface CustomCalendarEventTypeData extends CalendarEventTypeData {
-  noOfAttributes?: number;
-  attrs?: [];
-}
-
-
-export default class WfmCalendarEventManager {
+export default class CustomCalendarEventManager {
   CUSTOM_MAX_EVENT_COUNT = 3;
 
   #eventPositionMap = new Map();
 
   #eventPillAttributesMap = new Map();
 
-  #dateKey = '';
-
-  #order = 0;
-
-  #eventData: CustomCalendarEventTypeData | any;
-
-  /**
- * Sets dateKey property
- * @param {string} val dateKey string
- */
-  set dateKey(val: string) {
-    this.#dateKey = val;
+  generateYOffset(calendarEvent: IdsCustomCalendarEvent): number {
+    const eventTypeData = calendarEvent.eventTypeData;
+    const dateKey = calendarEvent.dateKey;
+    const order = calendarEvent.order;
+    let position = 0;
+    if (eventTypeData && order <= 3) {
+      // space between event pills
+      this.manageEventPillsPosition(dateKey, order, eventTypeData);
+      // position event element vertically
+      if (order === 0) {
+        position = 20;
+      } else if (this.#eventPositionMap.get(`${dateKey}_${order}`)) {
+        position = this.#eventPositionMap.get(`${dateKey}_${order}`);
+      } else {
+        // if event-types data doesn't contain noOfAttributes and attr values
+        position = (order * 18) + 25;
+      }
+    }
+    return position;
   }
 
-  /**
-   * Sets order property
-   * @param {number} val order number
-   */
-  set order(val: number) {
-    this.#order = val;
-  }
-
-  set eventData(data: CustomCalendarEventTypeData[] | any) {
-    this.#eventData = data;
-  }
-
-  get yOffset(): number {
-    return this.#eventPositionMap.get(`${this.#dateKey}_${this.#order}`);
-  }
-
-  set yOffset(calendarEvent: IdsCustomCalendarEvent | any) {
-    // const eventTypeData = calendarEvent.eventTypeData;
-    // const dateKey = calendarEvent.dateKey;
-    // const order = calendarEvent.order;
-    this.manageEventPillsPosition(this.#dateKey, this.#order, this.#eventData);
-    // const position = this.#eventPositionMap.get(`${dateKey}_${order}`);
-    console.log(this.#eventPositionMap);
-    // return position;
-  }
-
-  isEventOverflowing(event: IdsCustomCalendarEvent): boolean {
-    return event.order > this.CUSTOM_MAX_EVENT_COUNT - 1;
+  isEventOverflowing(calendarEvent: IdsCustomCalendarEvent): boolean {
+    return calendarEvent.order > this.CUSTOM_MAX_EVENT_COUNT - 1;
   }
 
   /**
@@ -96,7 +71,8 @@ export default class WfmCalendarEventManager {
     } else if (eventOrder === 2) {
       const firstPillAttributesCount = this.#eventPillAttributesMap.get(`${dateKey}_${eventOrder - 2}`);
       const secondPillAttributesCount = this.#eventPillAttributesMap.get(`${dateKey}_${eventOrder - 1}`);
-      if ((firstPillAttributesCount + secondPillAttributesCount + eventType.noOfAttributes) >= MAX_EVENT_PILL_ATTR_COUNT) {
+      if ((firstPillAttributesCount + secondPillAttributesCount + eventType.noOfAttributes)
+        >= MAX_EVENT_PILL_ATTR_COUNT) {
         this.CUSTOM_MAX_EVENT_COUNT = 2;
       } else {
         this.CUSTOM_MAX_EVENT_COUNT = 3;
@@ -111,36 +87,5 @@ export default class WfmCalendarEventManager {
       }
       this.#eventPillAttributesMap.set(`${dateKey}_${eventOrder}`, eventType.noOfAttributes);
     }
-  }
-
-  /**
-   * Groups calendar events by day using dateKey as key
-   * @param {CalendarEventData[]} events calendar events data
-   * @returns {Record<string, Array<CalendarEventData>>} collection of calendar events
-   */
-  groupEventsByDay(events: CalendarEventData[]): Record<string, Array<CalendarEventData>> {
-    const dayEvents: Record<string, Array<CalendarEventData>> = {};
-
-    events.forEach((event: CalendarEventData) => {
-      const dateKey = this.generateDateKey(new Date(event.starts)).toString();
-      if (!dayEvents[dateKey]) dayEvents[dateKey] = [];
-      dayEvents[dateKey].push(event);
-    });
-
-    return dayEvents;
-  }
-
-  /**
-   * Creates date key used in component
-   * Format - [year][month][date]
-   * @param {Date} date Date obj
-   * @returns {number} 20200421
-   */
-  generateDateKey(date: Date): number {
-    const year = date.getFullYear();
-    const month = date.getMonth().toString();
-    const day = date.getDate().toString();
-
-    return parseInt(`${year}${month.padStart(2, '0')}${day.padStart(2, '0')}`);
   }
 }

@@ -1,7 +1,7 @@
 import eventsJSON from '../../../assets/data/events.json';
 import IdsMonthView from '../../ids-month-view/ids-month-view';
 import IdsCalendar from '../ids-calendar';
-// import IdsCustomCalendarEvent from './ids-custom-calendar-event';
+import IdsCustomCalendarEvent from './ids-custom-calendar-event';
 import CustomCalendarEventManager from './ids-custom-calendar-event-manager';
 
 const eventsURL: any = eventsJSON;
@@ -17,6 +17,13 @@ function getCalendarEvents(): Promise<any> {
 document.addEventListener('DOMContentLoaded', async () => {
   const calendar: any = document.querySelector<IdsCalendar>('ids-calendar');
   const addEventMenu = document.querySelector('#add-event');
+
+  const view = calendar?.getView();
+  if (view instanceof IdsMonthView) {
+    const eventManager = new CustomCalendarEventManager();
+    view.generateYOffset = (event: IdsCustomCalendarEvent): number => eventManager.generateYOffset(event);
+    view.isEventOverflowing = (event: IdsCustomCalendarEvent): boolean => eventManager.isEventOverflowing(event);
+  }
 
   // Set event types
   calendar.eventTypesData = [
@@ -83,36 +90,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   ];
   calendar.eventsData = await getCalendarEvents();
-
-  const view = calendar?.getView();
-  if (view instanceof IdsMonthView) {
-    const eventManager = new CustomCalendarEventManager();
-    // const activeEvents = view.getActiveDayEvents();
-    // eventManager.eventData = activeEvents;
-    const eventsInRange = view.filterEventsByMonth(calendar.eventsData);
-    const monthEvents = eventManager.groupEventsByDay(eventsInRange);
-    // let calendarEvent;
-    // const customCalendarEvent: any = view.querySelector('[slot="customCalendarEvent"]');
-    // if (customCalendarEvent?.name === 'MonthViewCalendarEventTemplate') {
-    // calendarEvent = customCalendarEvent.cloneNode(true);
-    // const eventTemplate = customCalendarEvent.assignedNodes()[0];
-    // console.log(eventTemplate.dateKey);
-    // if (eventTemplate) {
-    //   calendarEvent = eventTemplate.cloneNode(true);
-    // }
-    // }
-    for (const dateKey in monthEvents) {
-      if (monthEvents.hasOwnProperty(dateKey)) {
-        eventManager.dateKey = dateKey;
-      }
-    }
-    eventManager.order = view.yOffset;
-    console.log(view.yOffset);
-    eventManager.yOffset = calendar.eventsData;
-    eventManager.eventData = calendar.eventsData;
-    view.yOffset = eventManager.yOffset;
-    view.isEventOverflowing = eventManager.isEventOverflowing;
-  }
 
   addEventMenu?.addEventListener('selected', (evt: any) => {
     // Mock user defined id
