@@ -8,6 +8,11 @@ export default class CustomCalendarEventManager {
 
   #eventPillAttributesMap = new Map();
 
+  /**
+   * Calculates the event Y_OFFSET value to set the event pill top position
+   * @param calendarEvent
+   * @returns yOffset
+   */
   generateYOffset(calendarEvent: IdsCustomCalendarEvent): number {
     const eventTypeData = calendarEvent.eventTypeData;
     const dateKey = calendarEvent.dateKey;
@@ -29,6 +34,11 @@ export default class CustomCalendarEventManager {
     return position;
   }
 
+  /**
+   * Checks if the event pills exceed the MAX_EVENT_COUNT in a day cell
+   * @param calendarEvent
+   * @returns isEventOverflowing
+   */
   isEventOverflowing(calendarEvent: IdsCustomCalendarEvent): boolean {
     return calendarEvent.order > this.CUSTOM_MAX_EVENT_COUNT - 1;
   }

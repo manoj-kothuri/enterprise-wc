@@ -46,8 +46,8 @@ import {
   BASE_Y_OFFSET,
   MIN_MONTH,
   MAX_MONTH,
-  WEEK_LENGTH,
   MAX_EVENT_COUNT,
+  WEEK_LENGTH,
   IdsRangeSettingsInterface
 } from './ids-month-view-common';
 
@@ -92,8 +92,6 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
 
   // Flag value for custom calendar event
   #isCustom = false;
-
-  #eventYOffset: number | any;
 
   /**
    * Return the attributes we handle as getters/setters
@@ -1494,7 +1492,7 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
       const days = this.#countDays(start, end) || 1;
 
       for (let i = 0; i < days; i++) {
-        const { calendarEvent } = this.#newCalendarEvent(customCalendarEvent);
+        const calendarEvent = this.#newCalendarEvent(customCalendarEvent);
         const eventType = this.eventTypesData?.find((et: CalendarEventTypeData) => et.id === event.type) ?? null;
         const eventOrder = baseOrder + index;
         calendarEvent.eventTypeData = eventType;
@@ -1571,15 +1569,15 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
    * @param {IdsCalendarEvent} customCalendarEvent optional custom event to use instead of default
    * @returns {IdsCalendarEvent} calendar event
    */
-  #newCalendarEvent(customCalendarEvent?: any): { calendarEvent: any } {
+  #newCalendarEvent(customCalendarEvent?: any): any {
     if (customCalendarEvent?.name === 'MonthViewCalendarEventTemplate') {
       const eventTemplate = customCalendarEvent.assignedNodes()[0];
       if (eventTemplate) {
         this.#isCustom = true;
-        return { calendarEvent: eventTemplate.cloneNode(true) };
+        return eventTemplate.cloneNode(true);
       }
     }
-    return { calendarEvent: new IdsCalendarEvent() };
+    return new IdsCalendarEvent();
   }
 
   /**
@@ -1606,10 +1604,20 @@ class IdsMonthView extends Base implements IdsRangeSettingsInterface {
     }
   }
 
+  /**
+   * Calculates the event Y_OFFSET value to set the event pill top position
+   * @param event
+   * @returns yOffset
+   */
   generateYOffset(event: IdsCalendarEvent): number {
     return (event.order * 16) + BASE_Y_OFFSET;
   }
 
+  /**
+   * Checks if the event pills exceed the MAX_EVENT_COUNT in a day cell
+   * @param event
+   * @returns isEventOverflowing
+   */
   isEventOverflowing(event: IdsCalendarEvent): boolean {
     return event.order > MAX_EVENT_COUNT - 1;
   }
