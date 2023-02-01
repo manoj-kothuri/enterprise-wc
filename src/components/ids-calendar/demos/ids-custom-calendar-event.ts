@@ -7,10 +7,6 @@ interface CustomCalendarEventTypeData extends CalendarEventTypeData {
   attrs?: [];
 }
 
-// const eventPositionMap = new Map();
-
-// const eventPillAttributesMap = new Map();
-
 @customElement('ids-custom-calendar-event')
 @scss(styles)
 export default class IdsCustomCalendarEvent extends IdsCalendarEvent {
