@@ -3,6 +3,9 @@
 ## 1.0.0-beta.4
 
 ### 1.0.0-beta.4 Fixes
+
+- `[Calendar]` Added logic to override default calendar event and display mulitline event pills display along with dynamic count of event pills in each day cell. ([#911](https://github.com/infor-design/enterprise-wc/issues/911))
+
 ## 1.0.0-beta.3
 
 ### 1.0.0-beta.3 Fixes
